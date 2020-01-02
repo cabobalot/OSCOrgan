@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class Window extends JPanel implements ItemListener {
 	
@@ -17,11 +18,31 @@ public class Window extends JPanel implements ItemListener {
     private static Sender sender;
  
     public Window() {
-    	super(new GridLayout(0, 2));
+    	super(new GridLayout(5, 5));
         
         readStopsFile2();
         
         setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+    }
+    
+    private void readStopsFile3() {
+    	
+    	JPanel stopGrid = new JPanel(new GridLayout(5, 5)); // create new grid
+    	
+    	BorderLayout divisionLayout = new BorderLayout(); // create new division (label for grid)
+//    	divisionLayout.addLayoutComponent(new JLabel("label 1"), BorderLayout.NORTH);
+//    	divisionLayout.addLayoutComponent(stopGrid, BorderLayout.CENTER); // add grid to division
+    	
+    	JCheckBox nextStop = new JCheckBox("Button"); //create checkbox
+    	nextStop.setSelected(false);
+    	
+    	stopGrid.add(nextStop);
+    	JPanel jp = new JPanel(divisionLayout);
+    	
+    	jp.add(new JLabel("title"), BorderLayout.NORTH);
+    	jp.add(stopGrid, BorderLayout.CENTER);
+    	
+    	add(jp);
     }
     
     private void readStopsFile2() {
@@ -44,36 +65,37 @@ public class Window extends JPanel implements ItemListener {
 	    while (sc.hasNext()) {
 	    	stopName = sc.nextLine(); // read from file
 	    	stopFeet = sc.nextLine();
-	    	
 	    	String myDivision = sc.nextLine();
+	    	curDivision = myDivision;
 	    	
 	    	JPanel stopGrid = new JPanel(new GridLayout(5, 5)); // create new grid
 	    	
-	    	BorderLayout divisionLayout = new BorderLayout(); // create new division (label for grid)
-	    	divisionLayout.addLayoutComponent(new JLabel(myDivision), BorderLayout.NORTH);
-	    	divisionLayout.addLayoutComponent(stopGrid, BorderLayout.CENTER); // add grid to division
+	    	JPanel divisionPanel = new JPanel(new BorderLayout()); // create new division
+	    	divisionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // border
+	    	divisionPanel.add(new JLabel(myDivision), BorderLayout.NORTH); // add label to division
+	    	divisionPanel.add(stopGrid, BorderLayout.CENTER); // add grid to division
 	    	
-	    	divisions.add(new JPanel(divisionLayout)); // add division to list
+	    	divisions.add(divisionPanel); // add division to list
 	    	
 	    	JCheckBox nextStop = new JCheckBox(stopName + " : " + stopFeet); //create checkbox
 	    	System.out.println(myDivision + " Stop:" + stopName + " " + stopFeet);
 	    	nextStop.setSelected(false);
 	        nextStop.addItemListener(this);
 	        
-	        stops.add(nextStop); // add check to grid
-	        stopGrid.add(nextStop);
+	        stops.add(nextStop); // add check to list
+	        stopGrid.add(nextStop); // add check to grid
 	    	
 	        String trash = sc.nextLine();
 	    	while (!trash.equals("=")) { // throw away unused info
 	    		trash = sc.nextLine();
 	    	}
 	    	
-	    	stopName = sc.nextLine(); //read next stop
+	    	stopName = sc.nextLine(); // read next stop
 	    	stopFeet = sc.nextLine();
 	    	myDivision = sc.nextLine();
 	    	while (curDivision.equals(myDivision)) { // loop through division
 
-		    	JCheckBox nextNextStop = new JCheckBox(stopName + " : " + stopFeet); //create checkbox
+		    	JCheckBox nextNextStop = new JCheckBox(stopName + " : " + stopFeet); // create checkbox
 		    	System.out.println(myDivision + " Stop:" + stopName + " " + stopFeet);
 		    	nextStop.setSelected(false);
 		        nextStop.addItemListener(this);
@@ -81,22 +103,28 @@ public class Window extends JPanel implements ItemListener {
 		        stops.add(nextNextStop); // add check to grid
 		        stopGrid.add(nextNextStop);
 		    	
-		        trash = sc.nextLine();
+		        if (sc.hasNext()) {
+			    	trash = sc.nextLine();
+			    	while (!trash.equals("=")) { // throw away unused info
+			    		trash = sc.nextLine();
+			    	}
+		    	}
+		    	if (sc.hasNext()) {
+		    		stopName = sc.nextLine(); //read next stop
+			    	stopFeet = sc.nextLine();
+			    	myDivision = sc.nextLine();
+		    	}
+		    	
+		    	
+	    	}
+	    	if (sc.hasNext()) {
+		    	trash = sc.nextLine();
 		    	while (!trash.equals("=")) { // throw away unused info
 		    		trash = sc.nextLine();
 		    	}
-		    	
-		    	stopName = sc.nextLine(); //read next stop
-		    	stopFeet = sc.nextLine();
-		    	myDivision = sc.nextLine();
-		    	
-	    	}
-	    	trash = sc.nextLine();
-	    	while (!trash.equals("=")) { // throw away unused info
-	    		trash = sc.nextLine();
 	    	}
 	    	
-	    	add(divisions.get(divisions.size() - 1));
+	    	add(divisionPanel);
 	    	
 	    }
 	    
@@ -203,7 +231,6 @@ public class Window extends JPanel implements ItemListener {
             @Override
             public void windowClosing(WindowEvent we) {
             	sender.sendMsg(new OSCMsg("/stop/program", 0, 0));
-
                 sender.close();
         		System.out.println("closed!");
             }
