@@ -184,8 +184,8 @@ public class Window extends JPanel implements ItemListener {
 
 		    	JCheckBox nextNextStop = new JCheckBox(stopName + " : " + stopFeet); // create checkbox
 		    	System.out.println(myDivision + " Stop:" + stopName + " " + stopFeet);
-		    	nextStop.setSelected(false);
-		        nextStop.addItemListener(this);
+		    	nextNextStop.setSelected(false);
+		    	nextNextStop.addItemListener(this);
 		        
 		        stops.add(nextNextStop); // add check to grid
 		        stopGrid.add(nextNextStop);
