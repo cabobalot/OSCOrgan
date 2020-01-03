@@ -18,7 +18,7 @@ public class Window extends JPanel implements ItemListener {
     private static Sender sender;
  
     public Window() {
-    	super(new GridLayout(5, 5));
+    	super(new GridLayout(0, 1));
         
         readStopsFile2();
         
@@ -27,22 +27,101 @@ public class Window extends JPanel implements ItemListener {
     
     private void readStopsFile3() {
     	
-    	JPanel stopGrid = new JPanel(new GridLayout(5, 5)); // create new grid
+    	ArrayList<JPanel> divisions = new ArrayList<JPanel>();
+    	stops = new ArrayList<JCheckBox>();
     	
-    	BorderLayout divisionLayout = new BorderLayout(); // create new division (label for grid)
-//    	divisionLayout.addLayoutComponent(new JLabel("label 1"), BorderLayout.NORTH);
-//    	divisionLayout.addLayoutComponent(stopGrid, BorderLayout.CENTER); // add grid to division
+    	File file = new File("./Stops.txt");
+    	Scanner sc;
+	    try {
+			sc = new Scanner(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+	    
+	    String curDivision = "";
+	    String stopName = "";
+	    String stopFeet = "";
+	    
+	    
+	    stopName = sc.nextLine(); // read from file
+    	stopFeet = sc.nextLine();
+    	String myDivision = sc.nextLine();
+    	String trash = sc.nextLine();
+    	while (!trash.equals("=")) { // throw away unused info
+    		trash = sc.nextLine();
+    	}
     	
-    	JCheckBox nextStop = new JCheckBox("Button"); //create checkbox
-    	nextStop.setSelected(false);
     	
-    	stopGrid.add(nextStop);
-    	JPanel jp = new JPanel(divisionLayout);
-    	
-    	jp.add(new JLabel("title"), BorderLayout.NORTH);
-    	jp.add(stopGrid, BorderLayout.CENTER);
-    	
-    	add(jp);
+	    while (sc.hasNext()) {
+	    	
+	    	curDivision = myDivision;
+
+	    	JPanel stopGrid = new JPanel(new GridBagLayout()); // create new grid
+	    	
+	    	JPanel divisionPanel = new JPanel(new BorderLayout()); // create new division
+	    	divisionPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // border
+	    	divisionPanel.add(new JLabel(myDivision), BorderLayout.NORTH); // add label to division
+	    	divisionPanel.add(stopGrid, BorderLayout.CENTER); // add grid to division
+	    	
+	    	divisions.add(divisionPanel); // add division to list
+	    	
+	    	JCheckBox nextStop = new JCheckBox(stopName + " : " + stopFeet); //create checkbox
+	    	System.out.println(myDivision + " Stop:" + stopName + " " + stopFeet);
+	    	nextStop.setSelected(false);
+	        nextStop.addItemListener(this);
+	        
+	        stops.add(nextStop); // add check to list
+	        
+	        GridBagConstraints gb = new GridBagConstraints();
+	        gb.gridy = GridBagConstraints.RELATIVE;
+	        gb.gridx = GridBagConstraints.RELATIVE;
+	        stopGrid.add(nextStop, gb); // add check to grid
+	    	
+	    	stopName = sc.nextLine(); // read next stop
+	    	stopFeet = sc.nextLine();
+	    	myDivision = sc.nextLine();
+	    	trash = sc.nextLine();
+	    	while (!trash.equals("=")) { // throw away unused info
+	    		trash = sc.nextLine();
+	    	}
+	    	while (curDivision.equals(myDivision)) { // loop through division
+
+		    	JCheckBox nextNextStop = new JCheckBox(stopName + " : " + stopFeet); // create checkbox
+		    	System.out.println(myDivision + " Stop:" + stopName + " " + stopFeet);
+		    	nextStop.setSelected(false);
+		        nextStop.addItemListener(this);
+		        
+		        stops.add(nextNextStop); // add check to grid
+		        
+//		        gb.gridy = gb.gridy + 1;
+//		        gb.gridx++;
+		        stopGrid.add(nextStop, gb); // add check to grid
+		    	
+		        if (sc.hasNext()) {
+			    	
+		    	}
+		    	if (sc.hasNext()) {
+		    		stopName = sc.nextLine(); //read next stop
+			    	stopFeet = sc.nextLine();
+			    	myDivision = sc.nextLine();
+			    	trash = sc.nextLine();
+			    	while (!trash.equals("=")) { // throw away unused info
+			    		trash = sc.nextLine();
+			    	}
+		    	}
+		    	else {
+		    		break;
+		    	}
+		    	
+	    	}
+	    	
+	    	add(divisionPanel);
+	    }
+	    
+	    
+	    sc.close();
     }
     
     private void readStopsFile2() {
@@ -62,12 +141,21 @@ public class Window extends JPanel implements ItemListener {
 	    String curDivision = "";
 	    String stopName = "";
 	    String stopFeet = "";
+	    
+	    
+	    stopName = sc.nextLine(); // read from file
+    	stopFeet = sc.nextLine();
+    	String myDivision = sc.nextLine();
+    	String trash = sc.nextLine();
+    	while (!trash.equals("=")) { // throw away unused info
+    		trash = sc.nextLine();
+    	}
+    	
+    	
 	    while (sc.hasNext()) {
-	    	stopName = sc.nextLine(); // read from file
-	    	stopFeet = sc.nextLine();
-	    	String myDivision = sc.nextLine();
-	    	curDivision = myDivision;
 	    	
+	    	curDivision = myDivision;
+
 	    	JPanel stopGrid = new JPanel(new GridLayout(5, 5)); // create new grid
 	    	
 	    	JPanel divisionPanel = new JPanel(new BorderLayout()); // create new division
@@ -85,14 +173,13 @@ public class Window extends JPanel implements ItemListener {
 	        stops.add(nextStop); // add check to list
 	        stopGrid.add(nextStop); // add check to grid
 	    	
-	        String trash = sc.nextLine();
-	    	while (!trash.equals("=")) { // throw away unused info
-	    		trash = sc.nextLine();
-	    	}
-	    	
 	    	stopName = sc.nextLine(); // read next stop
 	    	stopFeet = sc.nextLine();
 	    	myDivision = sc.nextLine();
+	    	trash = sc.nextLine();
+	    	while (!trash.equals("=")) { // throw away unused info
+	    		trash = sc.nextLine();
+	    	}
 	    	while (curDivision.equals(myDivision)) { // loop through division
 
 		    	JCheckBox nextNextStop = new JCheckBox(stopName + " : " + stopFeet); // create checkbox
@@ -104,28 +191,24 @@ public class Window extends JPanel implements ItemListener {
 		        stopGrid.add(nextNextStop);
 		    	
 		        if (sc.hasNext()) {
-			    	trash = sc.nextLine();
-			    	while (!trash.equals("=")) { // throw away unused info
-			    		trash = sc.nextLine();
-			    	}
+			    	
 		    	}
 		    	if (sc.hasNext()) {
 		    		stopName = sc.nextLine(); //read next stop
 			    	stopFeet = sc.nextLine();
 			    	myDivision = sc.nextLine();
+			    	trash = sc.nextLine();
+			    	while (!trash.equals("=")) { // throw away unused info
+			    		trash = sc.nextLine();
+			    	}
+		    	}
+		    	else {
+		    		break;
 		    	}
 		    	
-		    	
-	    	}
-	    	if (sc.hasNext()) {
-		    	trash = sc.nextLine();
-		    	while (!trash.equals("=")) { // throw away unused info
-		    		trash = sc.nextLine();
-		    	}
 	    	}
 	    	
 	    	add(divisionPanel);
-	    	
 	    }
 	    
 	    
